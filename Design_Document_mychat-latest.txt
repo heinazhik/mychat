@@ -1,0 +1,161 @@
+### *Design Specification Document for Enhanced Multi-API Chat Application* ###
+
+---
+
+### *1. Introduction*  
+This document provides a detailed specification for the *Enhanced Multi-API Chat Application*, a Python-based chat application built using *Tkinter*. The application allows users to interact with multiple AI providers (*Google Gemini, OpenAI, Ollama, xAI Grok, Anthropic Claude*) through a user-friendly interface. It includes advanced features such as *text formatting, file attachments, emoji support, and asynchronous message handling*.  
+
+---
+
+### *2. Goals*  
+- Provide a *robust and user-friendly interface* for multi-AI interactions.  
+- Allow seamless switching between *multiple AI providers*.  
+- Support *advanced text formatting* (bold, italic, underline).  
+- Handle API interactions *asynchronously* to maintain UI responsiveness.  
+- Enable users to *attach files* to chat sessions.  
+- Persist chat sessions, configurations, and file attachments.  
+- Provide *comprehensive error handling* and user feedback mechanisms.  
+
+---
+
+### *3. Architecture*  
+The application follows a *modular and object-oriented design*:  
+
+#### *3.1 APIConfig Class*  
+- Manages API provider configuration, including API keys, models, and system prompts.  
+- Includes an *Ollama model selection dropdown* that fetches available models using the `ollama list` command.  
+- Dynamically shows/hides Ollama-specific fields based on the active API.  
+
+#### *3.2 ChatApplication Class*  
+- Manages the main application logic, user interface, and API interactions.  
+- Handles session management, chat display, and message input.  
+- Implements asynchronous API requests using *threading* to prevent UI freezes.  
+
+#### *3.3 Data Structures*  
+- `self.config`: Stores configuration data from `config.yaml`.  
+- `self.sessions`: Stores chat sessions with message history and timestamps.  
+- `self.conversation_history`: Stores structured conversation history for API calls.  
+- `self.attached_files`: Stores file attachments for each session.  
+
+---
+
+### *4. Functional Description*  
+
+#### *4.1 API Configuration*  
+- Users can configure API keys, base URLs, models, system prompts, and temperature settings for different AI providers.  
+- The *Ollama model selection dropdown* dynamically lists available models.  
+
+#### *4.2 Session Management*  
+- *Left Panel*: Displays all saved chat sessions in a Listbox.  
+  - *New Session*: Creates a new session with a unique timestamp.  
+  - *Delete Session*: Removes the selected session from the UI and storage.  
+  - *Double-Click*: Loads an existing session.  
+
+#### *4.3 Chat Display*  
+- *Right Panel*: Displays messages from users and the AI in a ScrolledText widget.  
+  - *Current API Provider*: Shown at the top of the chat display.  
+  - *Right-Click Context Menu*: Allows copying selected text.  
+  - *Text Formatting*: Supports bold, italic, and underline formatting.  
+
+#### *4.4 Message Input*  
+- *Multi-line Text Widget*: For user message input.  
+- *Formatting Shortcuts*:  
+  - `Ctrl+B`: Bold  
+  - `Ctrl+I`: Italic  
+  - `Ctrl+U`: Underline  
+- *Enter Key*: Sends the message.  
+
+#### *4.5 Action Buttons*  
+- *Send*: Sends the user's message.  
+- *Attach*: Opens a file dialog to select files for the current session.  
+- *Emoji*: Opens an emoji selector window.  
+
+#### *4.6 File Attachments*  
+- Users can attach files to chat sessions.  
+- File metadata (path, name, and content) is stored in memory.  
+- Attachments are displayed in the chat window and saved in the exported log.  
+
+#### *4.7 Asynchronous API Requests*  
+- API requests are handled in a separate thread to prevent UI freezes.  
+- Error handling with retries is implemented for connection issues.  
+
+---
+
+### *5. Usage Guide*  
+
+#### *5.1 Starting the Application*  
+1. Run the script:  
+   ```bash
+   python3 mychat-enhanced.py
+   ```
+2. The main window will open with a left panel for sessions and a right panel for chat.  
+
+#### *5.2 Creating a New Session*  
+1. Click *New Session* in the left panel.  
+2. A new session will be created with a unique timestamp.  
+
+#### *5.3 Sending Messages*  
+1. Type your message in the input box.  
+2. Use `Ctrl+B`, `Ctrl+I`, or `Ctrl+U` to format text.  
+3. Press `Enter` or click *Send* to send the message.  
+
+#### *5.4 Attaching Files*  
+1. Click *Attach* to open the file dialog.  
+2. Select a file (max size: 10MB).  
+3. The file will be attached to the current session.  
+
+#### *5.5 Inserting Emojis*  
+1. Click *Emoji* to open the emoji selector.  
+2. Click an emoji to insert it into the message.  
+
+#### *5.6 Exporting Chat Logs*  
+1. Go to *File > Export Chat*.  
+2. Choose a location to save the chat log as a `.txt` file.  
+
+#### *5.7 Configuring API Settings*  
+1. Go to *Settings > API Configuration*.  
+2. Enter API keys, select models, and configure other settings.  
+3. Click *Save* to apply the changes.  
+
+---
+
+### *6. Technical Notes*  
+
+#### *6.1 Text Formatting*  
+- Bold: `*bold*`  
+- Italic: `_italic_`  
+- Underline: `~underline~`  
+
+#### *6.2 Asynchronous Operations*  
+- The application uses *threading* to handle API requests in the background.  
+- The *message queue* ensures smooth UI responsiveness.  
+
+#### *6.3 Data Persistence*  
+- Chat sessions are saved as JSON files in the `chat_logs` directory.  
+- Configurations are saved in `config.yaml`.  
+
+---
+
+### *7. Suggestions for Improvement*  
+
+#### *7.1 Future Enhancements*  
+- *Image Attachments*: Add support for image attachments with inline viewing.  
+- *Markdown Support*: Implement markdown formatting for messages.  
+- *Code Syntax Highlighting*: Add support for code blocks with syntax highlighting.  
+- *Message Search*: Implement a search functionality for chat history.  
+- *Logging System*: Add a proper logging system for debugging and error tracking.  
+
+#### *7.2 Error Handling*  
+- Add more robust error handling for API rate limits and network issues.  
+- Implement session backup functionality to prevent data loss.  
+
+#### *7.3 UI/UX Improvements*  
+- Improve the visual design with modern themes and icons.  
+- Add support for dark/light mode switching.  
+
+---
+
+### *8. Conclusion*  
+The *Enhanced Multi-API Chat Application* provides a powerful and flexible platform for interacting with multiple AI providers. With its advanced features and user-friendly interface, it is well-suited for both casual and professional use. Future enhancements will further improve its functionality and usability.  
+
+--- 

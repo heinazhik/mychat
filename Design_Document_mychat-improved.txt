@@ -1,0 +1,141 @@
+*📝 Design Spec: Enhanced Multi-API Chat App (mychat-enhanced.py) v2*
+
+*1. Intro*
+This doc details the design & functionality of an enhanced multi-API chat app. It's built with Python & Tkinter. This version has *message formatting*, *async API calls*, *file attachments*, *Ollama model selection*, & a *slicker UI*. ✨
+
+*2. Goals*
+*   ✅ User-friendly, robust multi-AI chat interface.
+*   ✅ Switch seamlessly between AI providers: Google Gemini, OpenAI, Ollama, xAI Grok, Anthropic Claude.
+*   ✅ Format text: *bold*, _italic_, ~underline~.
+*   ✅ Keep UI responsive with async API requests.
+*   ✅ Attach files to chat sessions.
+*   ✅ Save chat sessions, configs, & file attachments.
+*   ✅ Pick specific Ollama models.
+*   ✅ Solid error handling & user feedback. ⚠️
+
+*3. Architecture*
+*   *Modular & Object-Oriented:*
+    *   `APIConfig` class: Handles API provider settings, incl. Ollama model dropdown.
+    *   `ChatApplication` class: Manages app logic, UI, & API interaction.
+*   *Config:* `config.yaml` for API keys, settings etc. ⚙️
+*   *UI:* Tkinter for GUI. 🖼️
+*   *API Libs:* `google.generativeai`, `openai`, `anthropic`, `requests`. 📚
+*   *Async:* Threading + Message Queue (queue.Queue) for non-blocking API requests. ⏳
+*   *Data:* Chat sessions as JSON files in `chat_logs/`, attachments within session files. 🗄️
+*   *Files:* File attachments managed & stored in memory (currently). 📎
+
+*4. Functionality*
+*   *API Config (`APIConfig` class):*
+    *   ⚙️ Configure API keys, base URLs, models, system prompts, temp.
+    *   ⬇️ Ollama model selection via dropdown (`ollama list`).
+    *   🎛️ Dynamically show/hide Ollama fields based on active API.
+    *   💾 Saves active provider settings.
+    *   ⚠️ Error handling when listing Ollama models.
+*   *Main Chat Window (`ChatApplication` class):*
+    *   *Sessions (Left Panel):*
+        *   📜 Saved sessions in Listbox.
+        *   ➕ New session button (timestamped).
+        *   🗑️ Delete session button.
+        *   👆 Double-click loads session.
+    *   *Chat Display (Right Panel):*
+        *   💬 `ScrolledText` for messages.
+        *   🏷️ Current API provider label.
+        *   🖱️ Right-click context menu for copying.
+        *   ✨ Text formatting with special sequences: *bold*, _italic_, ~underline~.
+    *   *Message Input:*
+        *   ⌨️ Multi-line `Text` widget for input.
+        *   ↩️ Enter sends message.
+        *   ⌨️ Formatting shortcuts:
+            *   Ctrl+b: *bold*
+            *   Ctrl+i: _italic_
+            *   Ctrl+u: ~underline~
+        *   😊 Basic emoji insertion.
+    *   *Chat Interaction:*
+        *   📤 User message added to history & display.
+        *   🤖 AI response in separate thread.
+        *   📝 Messages saved with timestamps & senders.
+        *   📚 Conversation history in structured format: `{"role": "user/model", "parts":[message]}`.
+    *   *Async API:*
+        *   🧵 Uses `threading.Thread` + `queue.Queue` for background API calls.
+        *   ✅ Prevents UI freezes.
+        *  🔁 Implemented Error retries.
+        *   🖌️ Updates UI with `self.root.after` (thread-safe).
+    *   *File Attachments:*
+        *    📎 Attach button opens file dialog.
+        *    💾 File data & metadata stored in `self.attached_files`.
+        *    👁️‍🗨️ Info displayed in chat & saved in session log.
+        *   ⚠️ *Currently, files are stored in memory.*
+    *   *Ollama:*
+        *  ✅ Ollama models are listed using `ollama list`.
+        *  🚀 Selected model is used when generating response.
+    *  *Message Formatting:*
+         *  ✅ Messages can be formatted using `*bold*`, `_italic_`, `~underline~`
+         *  🎨 Formatted message is shown in chat output.
+    *  *Exporting:*
+        *  ➡️ Exports to `.txt` including messages, timestamps & attached file info.
+    *   *Data:*
+        *   💾 Chat sessions saved as JSON (`chat_logs/`).
+        *   ⚙️ Configs in `config.yaml`.
+        *   📂 Attachments in `self.attached_files`.
+    *   *Error Handling:*
+        *  ⚠️ `messagebox` for important steps.
+        *  🔁 Retries for API connection issues & rate limits (basic).
+
+*5. API Usage*
+*   *Google Gemini:* `google.generativeai` for text gen.
+*   *OpenAI:* `openai` for chat completions.
+*   *Ollama:* `subprocess` to run `ollama run`.
+*   *xAI Grok:* `requests` for RESTful API.
+*  *Anthropic Claude:* `anthropic` for chat completion.
+
+*6. Data Structures*
+*   `self.config`: dict for all configs (from `config.yaml`).
+*   `self.sessions`: dict of chat sessions: `{session_name: [(sender, message, timestamp), ...]}`
+*   `self.conversation_history`: list of messages for API calls: `[{"role": "user/model", "parts":[message]}, ...]`
+*   `self.log_dir`: string for the log directory path.
+*   `self.attached_files`: dict of file attachments: `{session_name: {file_index : {"file_path": <file_path>, "file_name":<file_name>, "file_content":<bytes>}}}`
+
+*7. UI Details*
+*   *Left Panel:* Sessions (listbox, buttons).
+*   *Right Panel:* Chat (`ScrolledText`, `Text` input, buttons).
+*   *Colors:* Consistent theme for clarity.
+*   *Fonts:* Styles for *bold*, _italic_, ~underline~.
+
+*8. Improvements*
+*   ✅ Advanced message formatting.
+*   ✅ Ollama model selection.
+*   ✅ Improved error handling.
+*   ✅ Asynchronous API requests.
+*   ✅ File attachments.
+*   ✅ Refined UI.
+
+*9. Technical Details*
+*   Text formatting via `*`, `_`, `~`.
+*   `threading` for smoother UI during API calls.
+*   `try/except` for error catching.
+*   File attachment data stored in memory (not on disk, *future enhancement needed*).
+*   `ollama list` for available Ollama models.
+
+*10. Debugging Tips & Future Enhancements*
+*   *Debugging:*
+    *   Use print statements to track message flow and API calls (consider adding proper logging in future).
+    *   Check console for error messages and tracebacks.
+    *   Verify `config.yaml` is correctly updated.
+    *   Use try/except blocks to catch and handle errors gracefully, consider raising custom exceptions for easier identification of issues.
+*   *Future:*
+    *   💾 Save/load attached files to disk.
+    *   🖼️ Image attachments with inline viewing.
+    *   🎨 More robust message formatting & code block highlighting.
+    *   🔍 Message search functionality.
+    *   📝 Markdown support.
+    *   ⌨️ Code syntax highlighting.
+    *   📈 Improve UI/UX even further.
+    *   💾 Session backup/restore.
+    *   🔁 Implement API rate limit handling.
+    *   ⏰ Proper logging system (e.g., `logging` module).
+    *   ♻️ Consider a more sophisticated message queue if the project scales.
+    *   📦 Modularize classes into separate files for readability
+*   *Known Issues:*
+    *   Memory usage could increase with many/large file attachments.
+    *   Error handling is basic for rate limiting.
+
