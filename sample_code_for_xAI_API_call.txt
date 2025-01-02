@@ -1,0 +1,48 @@
+import os
+import json
+import requests
+
+# Set the API key from environment variables for security
+api_key = os.environ.get('XAI_API_KEY')
+
+if not api_key:
+    raise ValueError("Please set the XAI_API_KEY environment variable.")
+
+# Define the endpoint URL
+url = "https://api.x.ai/v1/chat/completions"
+
+# Headers include the API key for authentication
+headers = {
+    "Authorization": f"Bearer {api_key}",
+    "Content-Type": "application/json"
+}
+
+# Prepare the payload
+data = {
+    "model": "grok-2-1212",  # Assuming 'grok-2-1212' is the correct model name
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are Grok, created by xAI. Provide responses that are maximally helpful and truthful."
+        },
+        {
+            "role": "user",
+            "content": "What's the current state of AI research in understanding human emotions?"
+        }
+    ],
+    "temperature": 0.7,  # Controls randomness of the response
+    "max_tokens": 10000,  # Maximum number of tokens to generate in the response
+}
+
+# Make the API call
+response = requests.post(url, headers=headers, json=data)
+
+# Check if the request was successful
+if response.status_code == 200:
+    result = response.json()
+    # Extract and print the response content
+    print(result['choices'][0]['message']['content'])
+else:
+    print(f"Error: {response.status_code}")
+    print(response.text)
+

@@ -1,0 +1,37 @@
+import os
+from anthropic import Anthropic
+
+# Set the API key from environment variables for security
+api_key = os.environ.get('ANTHROPIC_API_KEY')
+
+if not api_key:
+    raise ValueError("Please set the ANTHROPIC_API_KEY environment variable.")
+
+# Initialize the Anthropic client
+client = Anthropic(api_key=api_key)
+
+# Prepare the messages
+messages = [
+    {
+        "role": "system",
+        "content": "You are a helpful assistant with a focus on providing accurate and insightful answers."
+    },
+    {
+        "role": "user",
+        "content": "What's the current state of AI research in understanding human emotions?"
+    }
+]
+
+# Make the API call
+response = client.messages.create(
+    model="claude-3-5-sonnet-20241022",
+    messages=messages,
+    temperature=0.7,
+    max_tokens=1000
+)
+
+# Print the response content
+for content in response.content:
+    if content.type == "text":
+        print(content.text)
+
