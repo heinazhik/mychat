@@ -10,7 +10,7 @@ https://chatgpt.com/share/6776115e-b408-8000-a562-2377a44d7a52
 
 cross reference design document is in Design_Document_mychat-improved.txt
 
-How to run:
+*How to run:*
 
 1) create config.yaml using provided template file:
 
