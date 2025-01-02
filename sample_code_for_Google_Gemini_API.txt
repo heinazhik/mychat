@@ -1,0 +1,67 @@
+import google.generativeai as genai
+import time
+import requests
+import os
+from tkinter import messagebox
+from datetime import datetime
+
+def generate_ai_response(self, user_message):
+        """Generates the AI's response based on the active API provider."""
+        max_retries = 3
+        retry_delay = 2
+        ai_message = ""
+        for attempt in range(max_retries):
+            try:
+                provider = self.config.get("active_provider", "")
+                provider_config = self.config.get(provider, {})
+                if provider == "Google Gemini":
+
+                    genai.configure(api_key=provider_config.get("api_key", ""))
+                    model_instance = genai.GenerativeModel(model_name="gemini-2.0-flash-exp")
+
+                    contents = [{
+                       "parts": [
+                            {
+                                "text": provider_config.get("system_prompt", "You are a helpful assistant.")
+                            },
+                            {
+                                "text": user_message
+                            }
+                         ]
+                     }]
+                    response = model_instance.generate_content(contents=contents)
+
+                    ai_message = response.text.strip()
+                elif provider in ["OpenAI", "OpenAI Compatible"]:
+                      # OpenAI code here
+                      pass
+                elif provider == "Anthropic Claude":
+                    # Anthropic Claude code here
+                    pass
+                elif provider == "xAI Grok":
+                     # xAI Grok code here
+                     pass
+                elif provider == "Ollama":
+                    # Ollama code here
+                    pass
+                break
+
+            except requests.exceptions.RequestException as e:
+                 if attempt < max_retries -1 and "429" in str(e):
+                      time.sleep(retry_delay)
+                 else:
+                      ai_message = f"API request failed: {e}"
+
+            except Exception as e:
+                 if attempt < max_retries - 1:
+                     time.sleep(retry_delay)
+                 else:
+                    ai_message = f"Error generating response: {str(e)}"
+
+
+        timestamp = datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
+        self.sessions[self.current_session].append(("AI", ai_message, timestamp))
+        self.conversation_history.append({"role": "model", "parts": [ai_message]})
+        self.root.after(0, self.update_chat_display) # Use root.after to update the UI
+        self.save_session()
+
