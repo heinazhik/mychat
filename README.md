@@ -15,6 +15,7 @@ cross reference design document is in Design_Document_mychat-improved.txt
 1) create config.yaml using provided template file:
 
 2) execute the code:
+   
    python3 mychat.py
 
 *Updated version using PyQt as GUI interface:* mychat-pyqt-updated.py
