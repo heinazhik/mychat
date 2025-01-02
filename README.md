@@ -5,6 +5,9 @@ Complete code is in mychat.py
 
 Design document is in Design_Document_mychat-latest.txt
 
+Chat Session Continuity Workflow and Logic:
+https://chatgpt.com/share/6776115e-b408-8000-a562-2377a44d7a52
+
 cross reference design document is in Design_Document_mychat-improved.txt
 
 How to run:
